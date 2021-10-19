@@ -5,7 +5,7 @@ set -e
 npm run build
 # navigate into the build output directory
 cd dist
-
+git branch gh-pages
 git add -A
 git commit -m 'deploy'
 git push -u origin gh-pages
