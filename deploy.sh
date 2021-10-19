@@ -8,5 +8,5 @@ cd dist
 
 git add -A
 git commit -m 'deploy'
-git push gh-pages
+git push origin gh-pages
 cd -
