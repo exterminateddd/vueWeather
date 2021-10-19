@@ -2,8 +2,8 @@
   <div class="container">
     <div class="input-container">
       <div class="input-box">
-        <input class="city-input" v-model="city">
-        <button class="search-btn" v-on:click="updateWeather()"><img src="../next.png" alt=""></button>
+        <input class="city-input" v-model="city" v-on:keyup.enter="updateWeather()">
+        <button class="search-btn" v-on:click="updateWeather()"><img src="../arrow.svg" class="arrow" alt=""></button>
       </div>
     </div>
     <div class="info-container" v-if="isLoaded">
@@ -15,10 +15,13 @@
                                                                           'warm': checkWeatherRange(18, 25), 
                                                                           'hot': checkWeatherRange(25, 100)}">{{temperature}}</span>°C</h1>
     </div>
+    <error-alert v-if="hasErrored"></error-alert>
   </div>
 </template>
 
 <script>
+
+import ErrorAlert from "./components/ErrorAlert.vue";
 
 export default {
   name: 'App',
@@ -30,11 +33,16 @@ export default {
 
     temperature: 0,
     isLoaded: false,
+    hasErrored: false,
     resolvedCityName: '',
     resolvedCountryName: ''
   }},
+  components: {
+    errorAlert: ErrorAlert
+  },
   methods: {
-    checkWeatherRange(min, max) {
+
+     checkWeatherRange(min, max) {
       return this.temperature >= min && this.temperature < max;
     },
     updateWeather() {
@@ -44,16 +52,17 @@ export default {
           json => {
             if (res.ok) {
               this.isLoaded = true;
+              this.hasErrored = false;
+
               this.temperature = Math.round(json.main.temp*10)/10;
               this.resolvedCityName = json.name + ', ';
-              this.resolvedCountryName = json.sys.country
+              this.resolvedCountryName = json.sys.country;
             } else {
-              throw new Error("!200");
+              this.isLoaded = false;
+              this.hasErrored = true;
             }
           }
-        )).catch(() => {
-          this.isLoaded = false;
-        })
+        ))
     },
     toTitle(txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -63,11 +72,28 @@ export default {
 </script>
 
 <style>
-img {
+.info-container {
+  background: rgba(0, 0, 0, 0.116);
+  margin-top: 24px;
+  transition: .2s ease;
+}
+.info-container:hover {
+  box-shadow: 2px 2px 2px 2px rgba(219, 136, 136, 0.301);
+}
+.arrow {
   max-width: 100%;
   max-height: 100%;
+  width: auto;
+  height: auto;
   -webkit-user-drag: none;
   cursor: pointer;
+  transition: .2s linear;
+}
+.arrow:hover {
+  transform: translateX(6px);
+}
+.search-btn:hover {
+  opacity: 1;
 }
 .input-box {
   display: flex;
@@ -75,8 +101,13 @@ img {
 .search-btn {
   height: 54px;
   background: transparent;
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0, 0.432);
   border-left: none;
+  padding: 6px;
+  padding-right: 10px;
+  background: linear-gradient(to left, rgba(221, 221, 236, 0.616), rgb(255, 255, 255));
+
+  transition: .2s ease;
 }
 .hot {
   color: rgb(255, 76, 5);
@@ -114,7 +145,7 @@ input:active, input:focus, input:hover {
   width: 200px;
   height: 40px;
   
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0, 0.432);
   padding: 6px 12px;
   font-size: 28px;
   color: #2c3e50;
