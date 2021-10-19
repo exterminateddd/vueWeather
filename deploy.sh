@@ -4,4 +4,3 @@ npm run build
 git add dist
 git commit -m 'deploy'
 git push -f origin gh-pages
-cd -
