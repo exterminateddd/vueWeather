@@ -15,7 +15,7 @@
                                                                           'warm': checkWeatherRange(18, 25), 
                                                                           'hot': checkWeatherRange(25, 100)}">{{temperature}}</span>°C</h1>
     </div>
-    <error-alert v-if="hasErrored"></error-alert>
+    <error-alert v-if="hasErrored" message="Location not found"></error-alert>
   </div>
 </template>
 
